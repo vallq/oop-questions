@@ -1,0 +1,15 @@
+{
+  "name": "freshie",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Freshie.js",
+  "dependencies": {},
+  "devDependencies": {
+    "jest": "^25.1.0"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "Valerie",
+  "license": "ISC"
+}
