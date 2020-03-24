@@ -1,34 +1,25 @@
+const OrangeJuice = require("./OrangeJuice");
+const CoconutWater = require("./CoconutWater");
+
 class VendingMachine {
   constructor() {
-    this.juicePrice = 200;
-    this.accumulatedSum = 0;
     this.coinsArray = [];
     this.notesArray = [];
-    this.juiceType = "";
+    this.accumulatedSum = 0;
     this.changeToDispense = 0;
+    this.juiceType = "";
+    this.juicePrice = 0;
     this.returnOutput = [];
   }
 
-  printVendingMachineDetails() {
-    console.log(
-      "sum:",
-      this.accumulatedSum,
-      "coins:",
-      this.coinsArray,
-      "notes:",
-      this.notesArray,
-      "change:",
-      this.changeToDispense,
-      "output",
-      this.returnOutput
-    );
+  receiveJuiceTypeAndCash(juice, coins, notes) {
+    this.addAllCash(coins, notes);
+    this.setJuiceTypeAndPrice(juice);
+    this.checkTotalCash();
+    this.addFinalOutput();
   }
 
-  receiveJuiceTypeAndCash(juice, coins, notes) {
-    this.addCoins(coins);
-    this.addNotes(notes);
-    this.checkTotalCash();
-    this.juiceToDispense(juice);
+  addFinalOutput() {
     if (this.changeToDispense > 0) {
       this.addJuiceToOutput();
       this.addChangeToOutput();
@@ -36,16 +27,36 @@ class VendingMachine {
       this.addJuiceToOutput();
     }
   }
-
+  
   sendOutput() {
     return this.returnOutput;
   }
-  juiceToDispense(juice) {
+
+  setJuiceTypeAndPrice(juice) {
     this.juiceType = juice;
+    this.juicePrice = this.retrieveJuicePrice(juice);
+  }
+
+  retrieveJuicePrice(juice) {
+    let chosenJuice;
+    switch (juice) {
+      case "OJ":
+        chosenJuice = new OrangeJuice();
+        return chosenJuice.returnPrice();
+
+      case "CW":
+        chosenJuice = new CoconutWater();
+        return chosenJuice.returnPrice();
+    }
   }
 
   addJuiceToOutput() {
     this.returnOutput.push(this.juiceType);
+  }
+
+  addAllCash(coins, notes) {
+    this.addCoins(coins);
+    this.addNotes(notes);
   }
 
   addCoins(coins) {
@@ -88,6 +99,21 @@ class VendingMachine {
     });
 
     changeArray.forEach(change => this.returnOutput.push(change));
+  }
+
+  printVendingMachineDetails() {
+    console.log(
+      "sum:",
+      this.accumulatedSum,
+      "coins:",
+      this.coinsArray,
+      "notes:",
+      this.notesArray,
+      "change:",
+      this.changeToDispense,
+      "output",
+      this.returnOutput
+    );
   }
 }
 
