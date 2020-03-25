@@ -1,5 +1,6 @@
 const OrangeJuice = require("./OrangeJuice");
 const CoconutWater = require("./CoconutWater");
+const Inventory = require("./Inventory");
 
 class VendingMachine {
   constructor() {
@@ -10,13 +11,49 @@ class VendingMachine {
     this.juiceType = "";
     this.juicePrice = 0;
     this.returnOutput = [];
+    this.inventory = new Inventory();
   }
 
   receiveJuiceTypeAndCash(juice, coins, notes) {
     this.addAllCash(coins, notes);
     this.setJuiceTypeAndPrice(juice);
+    if(this.juiceType === "OJ") {
+      this.checkInventory();
+    } else if(this.juiceType === "CW") {
+      if(!this.inventory.hasCups()) {
+        this.reportNoCupsToOutput();
+      }
+      this.processOrder();
+    }
+  }
+
+  checkInventory() {
+    if (this.inventory.hasCups() && this.inventory.hasOranges()) {
+      this.processOrder();
+    } else if (!this.inventory.hasCups()) {
+      this.reportNoCupsToOutput();
+    } else if (!this.inventory.hasOranges()) {
+      this.reportNoOrangesToOutput();
+    }
+  }
+
+  processOrder() {
     this.checkTotalCash();
     this.addFinalOutput();
+  }
+
+  reportNoCupsToOutput() {
+    this.returnOutput.push("no cups");
+    this.changeToDispense = this.accumulatedSum;
+    this.accumulatedSum = 0;
+    this.addChangeToOutput();
+  }
+
+  reportNoOrangesToOutput() {
+    this.returnOutput.push("no OJ");
+    this.changeToDispense = this.accumulatedSum;
+    this.accumulatedSum = 0;
+    this.addChangeToOutput();
   }
 
   addFinalOutput() {
@@ -27,7 +64,7 @@ class VendingMachine {
       this.addJuiceToOutput();
     }
   }
-  
+
   sendOutput() {
     return this.returnOutput;
   }
